@@ -81,7 +81,7 @@ export default function About() {
         <div className="collage relative h-[560px] sm:h-[680px]">
           {IMAGES.map((img, i) => (
             <div key={i} data-speed={img.speed} className={`parallax-img absolute overflow-hidden rounded-[2rem] shadow-2xl shadow-black/60 ${img.cls}`}>
-              <DishImage src={img.src} alt="Inside Ember" accent={img.accent} className="h-full w-full" imgClassName="scale-110" />
+              <DishImage src={img.src} alt="Inside Ember" accent={img.accent} className="h-full w-full" imgClassName="scale-110" sizes="(max-width: 1024px) 60vw, 30vw" />
             </div>
           ))}
           <div className="absolute top-[52%] left-[52%] z-10 grid size-28 -translate-1/2 place-items-center rounded-full bg-ember-500 text-ink-950 shadow-2xl">

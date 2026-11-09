@@ -159,7 +159,7 @@ export default function OrbitalMenu({ dishes }) {
               toast(`${dish.name} added to your order`);
             }}
           >
-            <DishImage src={dish.image} alt={dish.name} accent={dish.accent} className="aspect-[4/3] w-full" />
+            <DishImage src={dish.image} alt={dish.name} accent={dish.accent} className="aspect-[4/3] w-full" sizes="220px" />
             <span className="orbit-shade pointer-events-none absolute inset-0 z-10 bg-black" />
             <div className="p-3 sm:p-4">
               <div className="flex items-center justify-between gap-2">

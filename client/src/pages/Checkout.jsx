@@ -105,7 +105,7 @@ export default function Checkout() {
               <div className="mt-5 space-y-3">
                 {items.map((i) => (
                   <div key={i._id} className="flex items-center gap-3">
-                    <DishImage src={i.image} alt={i.name} accent={i.accent} className="size-14 shrink-0 rounded-xl" />
+                    <DishImage src={i.image} alt={i.name} accent={i.accent} className="size-14 shrink-0 rounded-xl" sizes="56px" />
                     <div className="flex-1">
                       <p className="text-sm leading-tight">{i.name}</p>
                       <div className="mt-1 flex items-center gap-2 text-cream/50">

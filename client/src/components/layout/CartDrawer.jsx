@@ -59,7 +59,7 @@ export default function CartDrawer() {
                     exit={{ opacity: 0, x: 80, height: 0, marginTop: 0 }}
                     className="flex gap-4 rounded-2xl border border-white/5 bg-white/[0.03] p-3"
                   >
-                    <DishImage src={item.image} alt={item.name} accent={item.accent} className="size-20 shrink-0 rounded-xl" />
+                    <DishImage src={item.image} alt={item.name} accent={item.accent} className="size-20 shrink-0 rounded-xl" sizes="80px" />
                     <div className="flex flex-1 flex-col justify-between">
                       <div className="flex items-start justify-between gap-2">
                         <p className="font-medium leading-tight">{item.name}</p>

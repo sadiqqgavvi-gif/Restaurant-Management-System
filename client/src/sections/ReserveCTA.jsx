@@ -120,7 +120,7 @@ export default function ReserveCTA() {
             <div key={dish.name} data-depth={depth} className={`cta-float absolute ${cls} ${i % 2 ? 'hidden lg:block' : 'hidden md:block'}`}>
               <div style={{ rotate: `${rotate}deg` }}>
                 <div data-depth={depth} className="cta-float-inner overflow-hidden rounded-3xl border border-white/10 bg-ink-800 p-1.5 shadow-2xl shadow-black/60">
-                  <DishImage src={dish.image} alt={dish.name} accent={dish.accent} className="aspect-[4/5] rounded-[1.1rem]" />
+                  <DishImage src={dish.image} alt={dish.name} accent={dish.accent} className="aspect-[4/5] rounded-[1.1rem]" sizes="200px" />
                   <div className="flex items-center justify-between gap-2 px-2 pt-2 pb-1 text-xs">
                     <span className="truncate font-medium text-cream/80">{dish.name}</span>
                     <span className="shrink-0 text-ember-400">{money(dish.price)}</span>

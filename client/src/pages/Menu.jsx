@@ -32,7 +32,7 @@ function DishCard({ dish, index }) {
     >
       <TiltCard max={8} className="group overflow-hidden rounded-[2rem] border border-white/10 bg-ink-800">
         <div className="relative">
-          <DishImage src={dish.image} alt={dish.name} accent={dish.accent} className="aspect-[4/3]" imgClassName="group-hover:scale-110 !duration-[1.2s]" />
+          <DishImage src={dish.image} alt={dish.name} accent={dish.accent} className="aspect-[4/3]" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px" imgClassName="group-hover:scale-110 !duration-[1.2s]" />
           <div className="absolute inset-x-0 top-0 flex justify-between p-4">
             <span className="glass rounded-full bg-ink-950/50 px-3 py-1 text-xs capitalize">{dish.category}</span>
             {dish.spicy > 0 && (
