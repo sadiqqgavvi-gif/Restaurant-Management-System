@@ -15,6 +15,7 @@ import Menu from './pages/Menu';
 import Reservations from './pages/Reservations';
 import Checkout from './pages/Checkout';
 import Admin from './pages/Admin';
+import TrackOrder from './pages/TrackOrder';
 import NotFound from './pages/NotFound';
 
 const EASE = [0.7, 0, 0.2, 1];
@@ -71,6 +72,7 @@ export default function App() {
           <Route path="/reservations" element={<Page><Reservations /></Page>} />
           <Route path="/checkout" element={<Page><Checkout /></Page>} />
           <Route path="/admin" element={<Page><Admin /></Page>} />
+          <Route path="/track/:id" element={<Page><TrackOrder /></Page>} />
           <Route path="*" element={<Page><NotFound /></Page>} />
         </Routes>
       </AnimatePresence>

@@ -1,6 +1,7 @@
 import fallbackMenu from '../data/menu.json';
 
 const BASE = import.meta.env.VITE_API_URL || '/api';
+export const API_BASE = BASE;
 
 export async function api(path, { method = 'GET', body, token } = {}) {
   let res;

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { LayoutDashboard, ClipboardList, CalendarCheck, UtensilsCrossed, LogOut, DollarSign, Flame, Users, BookOpen, RefreshCw, Trash2, Plus, Lock } from 'lucide-react';
-import { api } from '../lib/api';
+import { LayoutDashboard, ClipboardList, CalendarCheck, UtensilsCrossed, LogOut, DollarSign, Flame, Users, BookOpen, RefreshCw, Trash2, Plus, Lock, Radio } from 'lucide-react';
+import { api, API_BASE } from '../lib/api';
 import { cn, money } from '../lib/utils';
 import { useToast } from '../context/ToastContext';
 import MagneticButton from '../components/ui/MagneticButton';
@@ -20,7 +20,7 @@ const STATUS_COLOR = {
 const readToken = () => { try { return localStorage.getItem(TOKEN_KEY); } catch { return null; } };
 
 function Login({ onLogin }) {
-  const [email, setEmail] = useState('admin@ember.com');
+  const [email, setEmail] = useState(import.meta.env.DEV ? 'admin@ember.com' : '');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -52,7 +52,7 @@ function Login({ onLogin }) {
             {error && <p className="text-sm text-red-300">{error}</p>}
             <MagneticButton type="submit" className="w-full" disabled={loading}>{loading ? 'Signing in…' : 'Sign in'}</MagneticButton>
           </form>
-          <p className="mt-6 text-center text-xs text-cream/40">Dev default: admin@ember.com / admin123 (set in server/.env)</p>
+          {import.meta.env.DEV && <p className="mt-6 text-center text-xs text-cream/40">Dev default: admin@ember.com / admin123 (set in server/.env)</p>}
         </TiltCard>
       </motion.div>
     </div>
@@ -116,7 +116,7 @@ function Orders({ orders, onStatus }) {
         <motion.div key={o._id} initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.03 }}
           className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-ink-800 p-5 md:flex-row md:items-center">
           <div className="md:w-40">
-            <p className="font-mono text-sm text-ember-400">#{o._id.slice(-6).toUpperCase()}</p>
+            <a href={`/track/${o._id}`} target="_blank" rel="noreferrer" className="font-mono text-sm text-ember-400 hover:underline">#{o._id.slice(-6).toUpperCase()}</a>
             <p className="text-xs text-cream/40">{new Date(o.createdAt).toLocaleString()}</p>
           </div>
           <div className="flex-1">
@@ -267,6 +267,23 @@ export default function Admin() {
 
   useEffect(() => { load(); }, [load]);
 
+  // Live kitchen feed: new orders and status changes arrive instantly (Server-Sent Events).
+  const [live, setLive] = useState(false);
+  useEffect(() => {
+    if (!token) return;
+    const es = new EventSource(`${API_BASE}/orders/stream?token=${encodeURIComponent(token)}`);
+    es.onopen = () => setLive(true);
+    es.onerror = () => setLive(false);
+    es.addEventListener('order', (e) => {
+      const { type, order } = JSON.parse(e.data);
+      if (type === 'created') {
+        toast(`New order #${order._id.slice(-6).toUpperCase()} · ${order.customer.name} · ${money(order.total)}`, 'info');
+      }
+      load();
+    });
+    return () => es.close();
+  }, [token, load, toast]);
+
   const login = (t) => {
     try { localStorage.setItem(TOKEN_KEY, t); } catch { /* ignore */ }
     setToken(t);
@@ -287,7 +304,12 @@ export default function Admin() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <span className="eyebrow"><span className="h-px w-8 bg-ember-400" /> Ember HQ</span>
-          <h1 className="mt-3 font-display text-5xl font-light sm:text-6xl">Dashboard</h1>
+          <h1 className="mt-3 flex items-center gap-4 font-display text-5xl font-light sm:text-6xl">
+            Dashboard
+            <span className={cn('flex items-center gap-1.5 rounded-full border px-3 py-1 font-sans text-xs', live ? 'border-emerald-400/30 text-emerald-300' : 'border-white/10 text-cream/40')}>
+              <Radio className={cn('size-3.5', live && 'animate-pulse')} /> {live ? 'Live' : 'Offline'}
+            </span>
+          </h1>
         </div>
         <div className="flex gap-2">
           <button onClick={load} className="grid size-11 place-items-center rounded-full border border-white/10 hover:border-ember-400" aria-label="Refresh">

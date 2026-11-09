@@ -27,7 +27,9 @@ router.delete('/menu/:id', protect, adminOnly, menu.deleteMenuItem);
 // Orders
 router.post('/orders', writeLimiter, orders.createOrder);
 router.get('/orders', protect, orders.listOrders);
-router.get('/orders/:id', orders.getOrder);
+router.get('/orders/stream', protect, orders.streamAllOrders); // staff live feed (SSE)
+router.get('/orders/:id', orders.getOrder); // public tracking view
+router.get('/orders/:id/stream', orders.streamOneOrder); // public live status (SSE)
 router.patch('/orders/:id/status', protect, orders.updateOrderStatus);
 
 // Reservations

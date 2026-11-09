@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Bike, ShoppingBag, UtensilsCrossed, Minus, Plus } from 'lucide-react';
+import { Bike, ShoppingBag, UtensilsCrossed, Minus, Plus, Radio } from 'lucide-react';
 import { api } from '../lib/api';
 import { useCart } from '../context/CartContext';
 import { cn, money } from '../lib/utils';
@@ -57,15 +57,13 @@ export default function Checkout() {
         <SuccessCheck className="size-28" />
         <h1 className="mt-6 font-display text-5xl sm:text-6xl">Order received</h1>
         <p className="mt-3 text-cream/60">The kitchen is firing up. Order <span className="text-ember-400">#{order._id.slice(-6).toUpperCase()}</span> · {money(order.total)}</p>
-        <div className="mt-8 flex gap-2">
-          {['pending', 'preparing', 'ready'].map((s, i) => (
-            <motion.span key={s} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 + i * 0.15 }}
-              className={cn('rounded-full border px-4 py-1.5 text-xs capitalize', i === 0 ? 'border-ember-400 text-ember-300' : 'border-white/10 text-cream/40')}>
-              {s}
-            </motion.span>
-          ))}
-        </div>
-        <MagneticButton to="/menu" variant="ghost" className="mt-10">Back to menu</MagneticButton>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }} className="mt-10 flex flex-wrap justify-center gap-4">
+          <MagneticButton to={`/track/${order._id}`}>
+            <Radio className="size-4" /> Track your order live
+          </MagneticButton>
+          <MagneticButton to="/menu" variant="ghost">Back to menu</MagneticButton>
+        </motion.div>
+        <p className="mt-4 text-xs text-cream/40">Bookmark the tracking page — it updates the moment the kitchen does.</p>
       </div>
     );
   }

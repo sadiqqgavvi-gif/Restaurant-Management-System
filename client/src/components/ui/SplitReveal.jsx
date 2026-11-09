@@ -59,7 +59,7 @@ export default function SplitReveal({
             const trail = m ? m[2] : '';
             return (
               <span key={wi} className="split-word align-bottom">
-                <span data-word className={cn('inline-block origin-bottom-left', accent && 'text-gradient -mb-[0.2em] pr-[0.1em] pb-[0.2em] italic')}>
+                <span data-word className={cn('inline-block origin-bottom-left', accent && 'text-gradient -mb-[0.2em] pr-[0.06em] pb-[0.2em] italic')}>
                   {word}
                 </span>
                 <span data-word className="inline-block">
