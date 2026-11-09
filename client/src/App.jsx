@@ -8,6 +8,7 @@ import CartDrawer from './components/layout/CartDrawer';
 import CustomCursor from './components/layout/CustomCursor';
 import Preloader from './components/layout/Preloader';
 import ScrollProgress from './components/layout/ScrollProgress';
+import ApiStatus from './components/layout/ApiStatus';
 import Home from './pages/Home';
 import Menu from './pages/Menu';
 import Reservations from './pages/Reservations';
@@ -54,6 +55,7 @@ export default function App() {
       <div className="grain" aria-hidden />
       <Navbar />
       <CartDrawer />
+      <ApiStatus />
       <AnimatePresence
         mode="wait"
         onExitComplete={() => {
