@@ -23,20 +23,28 @@ export default function SplitReveal({
   useGSAP(
     () => {
       const words = ref.current.querySelectorAll('[data-word]');
-      gsap.set(words, { yPercent: 115, rotate: 6, opacity: 0 });
+      // Always pin BOTH y and yPercent: a stale pixel `y` left in GSAP's cache (e.g. after a
+      // StrictMode re-mount) would otherwise leave the words parked below their line mask —
+      // the heading then looks missing even though the animation "finished".
+      const hidden = { y: 0, yPercent: 140, rotate: 6, opacity: 0 }; // 140%: clears the line mask's descender padding
+      gsap.set(words, hidden);
       if (!scroll && !ready) return;
-      gsap.to(words, {
+      gsap.fromTo(words, hidden, {
+        y: 0,
         yPercent: 0,
         rotate: 0,
         opacity: 1,
+        clearProps: 'transform',
         duration: 1.2,
         ease: 'expo.out',
         stagger,
         delay,
-        scrollTrigger: scroll ? { trigger: ref.current, start } : undefined,
+        scrollTrigger: scroll ? { trigger: ref.current, start, once: true } : undefined,
       });
     },
-    { scope: ref, dependencies: [ready, text] }
+    // Scroll-driven reveals don't depend on the preloader; re-running them on `ready`
+    // used to stack a second tween + trigger on the same words.
+    { scope: ref, dependencies: [scroll ? 0 : ready, text], revertOnUpdate: true }
   );
 
   const lines = text.split('\n');
@@ -50,8 +58,8 @@ export default function SplitReveal({
             const word = m ? m[1] : raw;
             const trail = m ? m[2] : '';
             return (
-              <span key={wi} className="split-word overflow-hidden pb-[0.08em] align-bottom">
-                <span data-word className={cn('inline-block origin-bottom-left', accent && 'text-gradient italic')}>
+              <span key={wi} className="split-word align-bottom">
+                <span data-word className={cn('inline-block origin-bottom-left', accent && 'text-gradient -mb-[0.2em] pr-[0.1em] pb-[0.2em] italic')}>
                   {word}
                 </span>
                 <span data-word className="inline-block">

@@ -23,7 +23,9 @@ export default function DishImage({ src, alt, accent = '#f59e0b', className, img
           onLoad={() => setState('loaded')}
           onError={() => setState('error')}
           className={cn(
-            'h-full w-full object-cover transition-all duration-700',
+            // absolute: a late-loading photo must never change the layout (it would
+            // shift every scroll animation below it)
+            'absolute inset-0 h-full w-full object-cover transition-all duration-700',
             state === 'loaded' ? 'scale-100 opacity-100' : 'scale-110 opacity-0',
             imgClassName
           )}

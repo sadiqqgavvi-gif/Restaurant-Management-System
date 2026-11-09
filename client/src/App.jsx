@@ -2,6 +2,7 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ScrollTrigger } from './lib/gsap';
 import { useLenis, scrollToTop } from './hooks/useLenis';
+import { useScrollRefresh } from './hooks/useScrollRefresh';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import CartDrawer from './components/layout/CartDrawer';
@@ -45,6 +46,7 @@ function Page({ children }) {
 
 export default function App() {
   useLenis();
+  useScrollRefresh();
   const location = useLocation();
 
   return (

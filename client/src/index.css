@@ -68,7 +68,7 @@
   .field {
     @apply w-full rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3.5 text-cream placeholder:text-cream/30 outline-none transition focus:border-ember-500/70 focus:bg-white/[0.06] focus:ring-4 focus:ring-ember-500/10;
   }
-  .split-line { overflow: hidden; display: block; padding-bottom: 0.1em; margin-bottom: -0.1em; }
+  .split-line { overflow: hidden; display: block; padding-bottom: 0.22em; margin-bottom: -0.22em; }
   .split-word { display: inline-block; }
 }
 
