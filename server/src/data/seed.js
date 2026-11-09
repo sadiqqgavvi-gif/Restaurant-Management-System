@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import '../config/env.js';
 import { fileURLToPath } from 'node:url';
 import { readFileSync } from 'node:fs';
 import MenuItem from '../models/MenuItem.js';

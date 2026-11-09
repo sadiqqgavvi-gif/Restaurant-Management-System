@@ -29,7 +29,18 @@ export async function connectDB() {
     await mongoose.connect(uri, { serverSelectionTimeoutMS: 5000 });
   } catch (err) {
     if (isProd || memoryServer) throw err;
-    // Dev convenience: a MONGO_URI was set but nothing is listening there.
+    const isLocal = /\/\/(localhost|127\.0\.0\.1)[:/]/.test(uri);
+    if (!isLocal) {
+      // A remote (e.g. Atlas) URI was given: show the real problem instead of hiding it.
+      console.error(`\n❌ Could not connect to MongoDB: ${err.message}`);
+      console.error('   Checklist for MongoDB Atlas:');
+      console.error('   • Network Access → "Allow access from anywhere" (0.0.0.0/0) is active');
+      console.error('   • Username/password in MONGO_URI match Database Access (no < > around the password)');
+      console.error('   • "querySrv"/"ENOTFOUND" errors are DNS: set Windows DNS to 8.8.8.8, or use the');
+      console.error('     non-SRV "mongodb://" connection string from Atlas instead of "mongodb+srv://"\n');
+      process.exit(1);
+    }
+    // Dev convenience: a local MONGO_URI was set but no MongoDB is running there.
     console.warn(`\n⚠️  Could not connect to MongoDB at ${uri.replace(/\/\/[^@]*@/, '//***@')} (${err.message}).`);
     console.warn('   Falling back to an in-memory database. Leave MONGO_URI empty to skip this check.\n');
     uri = await startMemoryServer();
