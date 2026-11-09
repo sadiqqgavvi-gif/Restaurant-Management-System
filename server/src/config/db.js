@@ -7,10 +7,16 @@ async function startMemoryServer() {
   console.log('⏳ Starting in-memory MongoDB — the first run downloads the MongoDB binary once (can be 700+ MB on Windows), please wait…');
   try {
     const { MongoMemoryServer } = await import('mongodb-memory-server');
-    memoryServer = await MongoMemoryServer.create();
+    // The default 10s launch limit is too short on Windows: the first start of mongod.exe
+    // is often slowed down by antivirus scanning or a firewall prompt.
+    memoryServer = await MongoMemoryServer.create({ instance: { launchTimeout: 90_000 } });
     return memoryServer.getUri('ember');
   } catch (err) {
     console.error('\n❌ Could not start the in-memory MongoDB:', err.message);
+    if (/failed to start within/i.test(err.message)) {
+      console.error('   MongoDB was downloaded but took too long to start. On Windows this is usually');
+      console.error('   antivirus scanning mongod.exe or a Firewall prompt: allow it, then simply restart.');
+    }
     console.error('   Fix: install MongoDB locally, or create a free MongoDB Atlas cluster,');
     console.error('   then set MONGO_URI in server/.env and restart.\n');
     process.exit(1);
