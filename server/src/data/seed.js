@@ -1,10 +1,8 @@
 import '../config/env.js';
 import { fileURLToPath } from 'node:url';
-import { readFileSync } from 'node:fs';
 import MenuItem from '../models/MenuItem.js';
 import User from '../models/User.js';
-
-const menu = JSON.parse(readFileSync(new URL('./menu.json', import.meta.url), 'utf8'));
+import menu from './menu.json' with { type: 'json' };
 
 /** Seeds menu + admin user only when the collections are empty. */
 export async function seedIfEmpty({ force = false } = {}) {

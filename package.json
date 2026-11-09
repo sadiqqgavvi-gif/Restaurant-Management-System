@@ -17,5 +17,6 @@
   },
   "engines": {
     "node": ">=20.19"
-  }
+  },
+  "type": "module"
 }

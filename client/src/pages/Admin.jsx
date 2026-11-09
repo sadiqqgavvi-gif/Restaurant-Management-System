@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { LayoutDashboard, ClipboardList, CalendarCheck, UtensilsCrossed, LogOut, DollarSign, Flame, Users, BookOpen, RefreshCw, Trash2, Plus, Lock, Radio } from 'lucide-react';
 import { api, API_BASE } from '../lib/api';
@@ -249,21 +249,35 @@ export default function Admin() {
     setToken(null);
   }, []);
 
-  const load = useCallback(async () => {
+  // Orders already shown/announced, so a new order is toasted exactly once
+  // whether it arrives through the live stream or through polling.
+  const seen = useRef(null);
+  const announce = useCallback(
+    (order) => {
+      if (!seen.current || seen.current.has(order._id)) return;
+      seen.current.add(order._id);
+      toast(`New order #${order._id.slice(-6).toUpperCase()} · ${order.customer.name} · ${money(order.total)}`, 'info');
+    },
+    [toast]
+  );
+
+  const load = useCallback(async ({ silent = false } = {}) => {
     if (!token) return;
-    setLoading(true);
+    if (!silent) setLoading(true);
     try {
       const [stats, orders, reservations, menu] = await Promise.all([
         api('/stats', { token }), api('/orders', { token }), api('/reservations', { token }), api('/menu', { token }),
       ]);
+      if (seen.current) orders.forEach(announce);
+      else seen.current = new Set(orders.map((o) => o._id));
       setData({ stats, orders, reservations, menu });
     } catch (err) {
       if (err.status === 401) logout();
-      toast(err.message, 'error');
+      if (!silent) toast(err.message, 'error');
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
-  }, [token, logout, toast]);
+  }, [token, logout, toast, announce]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -276,13 +290,17 @@ export default function Admin() {
     es.onerror = () => setLive(false);
     es.addEventListener('order', (e) => {
       const { type, order } = JSON.parse(e.data);
-      if (type === 'created') {
-        toast(`New order #${order._id.slice(-6).toUpperCase()} · ${order.customer.name} · ${money(order.total)}`, 'info');
-      }
-      load();
+      if (type === 'created') announce(order);
+      load({ silent: true });
     });
-    return () => es.close();
-  }, [token, load, toast]);
+    // Safety net: on serverless hosts (Vercel) the stream can't see events from other
+    // instances, so also refresh quietly every 15s.
+    const poll = setInterval(() => load({ silent: true }), 15_000);
+    return () => {
+      es.close();
+      clearInterval(poll);
+    };
+  }, [token, load, announce]);
 
   const login = (t) => {
     try { localStorage.setItem(TOKEN_KEY, t); } catch { /* ignore */ }
@@ -312,7 +330,7 @@ export default function Admin() {
           </h1>
         </div>
         <div className="flex gap-2">
-          <button onClick={load} className="grid size-11 place-items-center rounded-full border border-white/10 hover:border-ember-400" aria-label="Refresh">
+          <button onClick={() => load()} className="grid size-11 place-items-center rounded-full border border-white/10 hover:border-ember-400" aria-label="Refresh">
             <RefreshCw className={cn('size-4', loading && 'animate-spin')} />
           </button>
           <button onClick={logout} className="flex items-center gap-2 rounded-full border border-white/10 px-4 text-sm hover:border-red-400 hover:text-red-300">

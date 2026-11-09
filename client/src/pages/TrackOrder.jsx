@@ -24,25 +24,32 @@ export default function TrackOrder() {
 
   useEffect(() => {
     let es;
+    let poll;
+    const apply = (next) =>
+      setOrder((prev) => {
+        if (prev && prev.status !== next.status) {
+          setFlash(true);
+          setTimeout(() => setFlash(false), 1200);
+        }
+        return next;
+      });
+
     api(`/orders/${id}`)
       .then((o) => {
         setOrder(o);
+        // Instant updates via Server-Sent Events…
         es = new EventSource(`${API_BASE}/orders/${id}/stream`);
         es.onopen = () => setLive(true);
         es.onerror = () => setLive(false); // EventSource reconnects by itself
-        es.addEventListener('status', (e) => {
-          const next = JSON.parse(e.data);
-          setOrder((prev) => {
-            if (prev && prev.status !== next.status) {
-              setFlash(true);
-              setTimeout(() => setFlash(false), 1200);
-            }
-            return next;
-          });
-        });
+        es.addEventListener('status', (e) => apply(JSON.parse(e.data)));
+        // …plus a light poll as a safety net (serverless hosts can drop or split streams).
+        poll = setInterval(() => api(`/orders/${id}`).then(apply).catch(() => {}), 8000);
       })
       .catch((err) => setError(err.status === 404 || err.status === 400 ? 'We couldn’t find that order.' : err.message));
-    return () => es?.close();
+    return () => {
+      es?.close();
+      clearInterval(poll);
+    };
   }, [id]);
 
   if (error) {

@@ -12,7 +12,7 @@
 ![Three.js](https://img.shields.io/badge/Three.js-000?logo=threedotjs&logoColor=white)
 ![GSAP](https://img.shields.io/badge/GSAP-88CE02?logo=greensock&logoColor=black)
 
-**Live demo:** _add your Render URL here after deploying (see [Deploy](#-deploy-free))_
+**Live demo:** _add your Vercel URL here after deploying (see [Deploy](#-deploy-free-no-credit-card))_
 
 ![Ember home page with an interactive 3D dish](docs/screenshots/hero.jpg)
 
@@ -92,18 +92,21 @@ Dev login for `/admin`: `admin@ember.com` / `admin123`.
 npm test             # API unit + integration tests
 ```
 
-## 🌍 Deploy (free)
+## 🌍 Deploy (free, no credit card)
 
-The repo includes a `render.yaml` blueprint that runs one Node service serving both the API and the built React app.
+The app deploys to **Vercel**. The React build is served from Vercel's CDN, and the Express API runs as a serverless function (`api/index.js`) that reuses one MongoDB connection per warm instance. `vercel.json` already contains the build and routing settings.
 
-1. **MongoDB Atlas.** Create a free M0 cluster, add a database user, and allow access from `0.0.0.0/0` under **Network Access**. Copy the connection string and add the database name: `…mongodb.net/ember?retryWrites=true&w=majority`
-2. **Render.** Go to [render.com](https://render.com), choose **New → Blueprint**, and select this repository.
-3. Fill in the two secret values when asked:
-   - `MONGO_URI`: your Atlas string
-   - `ADMIN_PASSWORD`: a strong password (`admin123` is refused in production)
-4. Deploy. The menu and an admin user are seeded automatically on first start. Add the URL at the top of this README.
+1. **MongoDB Atlas.** Create a free M0 cluster and a database user. Under **Network Access**, allow `0.0.0.0/0` (Vercel has no fixed IPs). Copy the connection string and add the database name: `…mongodb.net/ember?retryWrites=true&w=majority`
+2. **Vercel.** Sign up at [vercel.com](https://vercel.com) with GitHub (Hobby plan, no card), then choose **Add New → Project** and import this repository. Leave the framework preset as **Other**, because the settings come from `vercel.json`.
+3. Under **Environment Variables**, add:
+   | Key | Value |
+   | --- | --- |
+   | `MONGO_URI` | your Atlas connection string |
+   | `ADMIN_PASSWORD` | a strong password (`admin123` is refused in production) |
+   | `JWT_SECRET` | any long random string |
+4. Click **Deploy**. On the first request the menu and an admin user (`admin@ember.com`) are seeded automatically. Add the URL at the top of this README.
 
-> The free Render plan sleeps after inactivity, so the first request can take ~30 seconds.
+> **Live updates on serverless:** functions can't hold one shared in-memory event bus, so the tracking page and dashboard combine Server-Sent Events with a light polling fallback (8s / 15s). On a long-running server (`npm start`, or the included `render.yaml` for Render) updates arrive instantly.
 
 ## 🔌 API
 
@@ -128,4 +131,4 @@ The repo includes a `render.yaml` blueprint that runs one Node service serving b
 ## 📝 Notes
 
 - Dish photos are hot-linked from Unsplash. Swap them for your own in `server/src/data/menu.json`.
-- One known limitation: SSE events go through an in-process emitter, so for multiple server instances you'd swap it for Redis pub/sub or MongoDB change streams.
+- SSE events go through an in-process emitter. With several long-running instances you'd swap it for Redis pub/sub or MongoDB change streams. On serverless, the polling fallback covers it.
