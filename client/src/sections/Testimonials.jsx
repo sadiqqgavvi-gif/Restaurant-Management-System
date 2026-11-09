@@ -14,7 +14,7 @@ const REVIEWS = [
 
 function Review({ r }) {
   return (
-    <figure className="glass w-[300px] shrink-0 rounded-3xl p-6 sm:w-[380px]">
+    <figure className="w-[300px] shrink-0 rounded-3xl border border-white/10 bg-ink-800 p-6 sm:w-[380px]">
       <div className="flex items-center justify-between">
         <Quote className="size-7 text-ember-400" />
         <div className="flex">{[...Array(5)].map((_, i) => <Star key={i} className="size-3.5 fill-ember-400 text-ember-400" />)}</div>
@@ -48,10 +48,10 @@ export default function Testimonials() {
       <div className="container-x mb-16">
         <SectionHeading eyebrow="Guest notes" title={'Loved by the\npeople we *feed*'} />
       </div>
-      <div className="rev-row-a flex w-max gap-6">
+      <div className="rev-row-a flex w-max gap-6 will-change-transform">
         {[...REVIEWS, ...REVIEWS].map((r, i) => <Review key={i} r={r} />)}
       </div>
-      <div className="rev-row-b mt-6 flex w-max gap-6">
+      <div className="rev-row-b mt-6 flex w-max gap-6 will-change-transform">
         {[...REVIEWS].reverse().concat(REVIEWS).map((r, i) => <Review key={i} r={r} />)}
       </div>
     </section>

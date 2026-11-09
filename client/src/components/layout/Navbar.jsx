@@ -50,7 +50,7 @@ export default function Navbar() {
         <nav
           className={cn(
             'container-x flex items-center justify-between rounded-full transition-all duration-500',
-            scrolled && 'glass mx-auto max-w-6xl bg-ink-950/60 py-2.5 shadow-2xl shadow-black/40'
+            scrolled && 'glass mx-auto max-w-6xl bg-ink-950/70 backdrop-blur-xl py-2.5 shadow-2xl shadow-black/40'
           )}
         >
           <Logo />

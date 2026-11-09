@@ -10,7 +10,12 @@ export const getLenis = () => lenisInstance;
 export function useLenis() {
   useEffect(() => {
     if (prefersReducedMotion()) return;
-    const lenis = new Lenis({ duration: 1.15, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+    const lenis = new Lenis({
+      lerp: 0.075, // lower = smoother, more gliding scroll
+      wheelMultiplier: 0.75, // each wheel notch travels less → slower, calmer scrolling
+      touchMultiplier: 1.2,
+      smoothWheel: true,
+    });
     lenisInstance = lenis;
     lenis.on('scroll', ScrollTrigger.update);
     const raf = (time) => lenis.raf(time * 1000);

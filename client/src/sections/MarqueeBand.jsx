@@ -35,10 +35,10 @@ export default function MarqueeBand() {
   return (
     <section ref={root} className="relative overflow-hidden py-20">
       <div className="-rotate-2 border-y border-white/10 bg-ember-500 py-5 text-ink-950">
-        <div className="ribbon-a flex w-max">{row(false)}</div>
+        <div className="ribbon-a flex w-max will-change-transform">{row(false)}</div>
       </div>
       <div className="mt-4 rotate-1 py-4">
-        <div className="ribbon-b flex w-max">{row(true)}</div>
+        <div className="ribbon-b flex w-max will-change-transform">{row(true)}</div>
       </div>
     </section>
   );

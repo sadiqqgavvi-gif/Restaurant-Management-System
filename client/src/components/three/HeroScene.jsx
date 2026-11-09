@@ -1,6 +1,6 @@
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Float, MeshDistortMaterial, Sparkles, ContactShadows } from '@react-three/drei';
+import { Float, MeshDistortMaterial, Sparkles, ContactShadows, PerformanceMonitor } from '@react-three/drei';
 import * as THREE from 'three';
 import { StudioEnv, pointer } from './shared';
 import { useInView } from '../../hooks/useInView';
@@ -56,12 +56,12 @@ function Ingredient({ type, color, position, scale, rotation }) {
       break;
     default:
       geometry = <sphereGeometry args={[0.14, 32, 32]} />;
-      material = <meshPhysicalMaterial color={color} roughness={0} transmission={0.6} thickness={0.5} ior={1.4} />;
+      material = <meshPhysicalMaterial color={color} roughness={0.05} clearcoat={1} />;
   }
 
   return (
     <Float speed={floatSpeed} rotationIntensity={1.2} floatIntensity={1.5}>
-      <mesh ref={ref} position={position} scale={scale} rotation={rotation} castShadow>
+      <mesh ref={ref} position={position} scale={scale} rotation={rotation}>
         {geometry}
         {material}
       </mesh>
@@ -79,7 +79,7 @@ function Plate() {
     []
   );
   return (
-    <mesh receiveShadow castShadow>
+    <mesh>
       <latheGeometry args={[points, 96]} />
       <meshPhysicalMaterial color="#f5ede1" roughness={0.18} clearcoat={1} clearcoatRoughness={0.05} side={THREE.DoubleSide} />
     </mesh>
@@ -110,8 +110,8 @@ function Dish() {
       <Plate />
       {/* The "ember" — a molten glossy centrepiece */}
       <Float speed={2} rotationIntensity={0.4} floatIntensity={0.6}>
-        <mesh position={[0, 0.85, 0]} castShadow>
-          <sphereGeometry args={[0.72, 128, 128]} />
+        <mesh position={[0, 0.85, 0]}>
+          <sphereGeometry args={[0.72, 64, 64]} />
           <MeshDistortMaterial color="#ea580c" emissive="#7c2d12" emissiveIntensity={0.6} roughness={0.12} metalness={0.2} distort={0.38} speed={2.2} />
         </mesh>
       </Float>
@@ -164,24 +164,26 @@ function Ingredients() {
 }
 
 export default function HeroScene() {
+  // Start at a moderate pixel ratio and lower it automatically if the device struggles.
+  const [dpr, setDpr] = useState(1.5);
   const wrap = useRef(null);
   const inView = useInView(wrap, '0px');
   return (
     <div ref={wrap} className="absolute inset-0">
       <Canvas
-        shadows="percentage"
-        dpr={[1, 1.75]}
+        dpr={dpr}
         frameloop={inView ? 'always' : 'never'}
         camera={{ position: [0, 1.2, 7.5], fov: 38 }}
         gl={{ antialias: true, alpha: true, toneMapping: THREE.ACESFilmicToneMapping }}
       >
+        <PerformanceMonitor onDecline={() => setDpr(1)} onIncline={() => setDpr(1.5)} />
         <ambientLight intensity={0.25} />
-        <spotLight position={[4, 8, 4]} angle={0.4} penumbra={1} intensity={60} color="#fff1db" castShadow />
+        <spotLight position={[4, 8, 4]} angle={0.4} penumbra={1} intensity={60} color="#fff1db" />
         <pointLight position={[-6, -2, -2]} intensity={25} color="#f97316" />
         <Dish />
         <Ingredients />
-        <Sparkles count={80} scale={[10, 6, 6]} size={2.5} speed={0.4} color="#fbbf24" opacity={0.8} />
-        <ContactShadows position={[0, -1.6, 0]} opacity={0.5} scale={12} blur={2.8} far={4} color="#000" />
+        <Sparkles count={50} scale={[10, 6, 6]} size={2.5} speed={0.4} color="#fbbf24" opacity={0.8} />
+        <ContactShadows position={[0, -1.6, 0]} opacity={0.45} scale={12} blur={2.4} far={4} resolution={256} frames={1} color="#000" />
         <StudioEnv />
       </Canvas>
     </div>

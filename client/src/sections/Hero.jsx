@@ -40,7 +40,7 @@ export default function Hero() {
 
   return (
     <section ref={root} className="relative h-[100svh] min-h-[640px] overflow-hidden">
-      <div className="hero-glow pointer-events-none absolute top-1/2 left-1/2 size-[70vmin] -translate-1/2 rounded-full bg-ember-600/25 blur-[120px]" />
+      <div className="hero-glow pointer-events-none absolute top-1/2 left-1/2 size-[110vmin] -translate-1/2 rounded-full bg-[radial-gradient(circle,rgba(234,88,12,.28),transparent_60%)] will-change-transform" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,var(--color-ink-950)_80%)]" />
 
       <div className="hero-canvas absolute inset-0 md:left-[30%]">

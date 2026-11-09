@@ -21,10 +21,11 @@ export default function StackedExperiences() {
       const cards = gsap.utils.toArray('.stack-card');
       cards.forEach((card, i) => {
         if (i === cards.length - 1) return;
+        const st = { trigger: cards[i + 1], start: 'top bottom', end: 'top 15%', scrub: true };
+        gsap.to(card.querySelector('.stack-shade'), { opacity: 0.6, ease: 'none', scrollTrigger: st });
         gsap.to(card.querySelector('.stack-inner'), {
           scale: 0.88 + i * 0.025,
           rotateX: -8,
-          filter: 'brightness(0.4)',
           ease: 'none',
           scrollTrigger: {
             trigger: cards[i + 1],
@@ -47,7 +48,8 @@ export default function StackedExperiences() {
             const Icon = exp.icon;
             return (
               <div key={exp.title} className="stack-card sticky [perspective:1200px]" style={{ top: `calc(12vh + ${i * 24}px)` }}>
-                <div className={`stack-inner grid origin-top bg-ink-800 overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br ${exp.color} to-ink-800 to-60% shadow-2xl shadow-black/50 md:min-h-[60vh] md:grid-cols-2`}>
+                <div className={`stack-inner grid origin-top bg-ink-800 overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br ${exp.color} to-ink-800 to-60% shadow-2xl shadow-black/50 md:min-h-[60vh] md:grid-cols-2 relative will-change-transform`}>
+                  <div className="stack-shade pointer-events-none absolute inset-0 z-10 bg-black opacity-0" />
                   <div className="flex flex-col justify-between gap-10 p-8 sm:p-12">
                     <div className="flex items-center justify-between">
                       <span className="grid size-14 place-items-center rounded-2xl bg-ink-950/50 text-ember-400"><Icon className="size-7" /></span>

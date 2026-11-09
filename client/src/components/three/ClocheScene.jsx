@@ -48,14 +48,14 @@ function Cloche({ progress }) {
       </mesh>
 
       <mesh ref={glow} position={[0, 0.7, 0]}>
-        <sphereGeometry args={[0.85, 96, 96]} />
+        <sphereGeometry args={[0.85, 64, 64]} />
         <MeshDistortMaterial color="#f97316" emissive="#ea580c" emissiveIntensity={1.4} roughness={0.2} distort={0.45} speed={3} />
       </mesh>
       <pointLight ref={light} position={[0, 1, 0]} intensity={0} distance={6} color="#fbbf24" />
 
       <group ref={lid} position={[0, 0.25, 0]}>
         <mesh castShadow>
-          <sphereGeometry args={[1.65, 96, 48, 0, Math.PI * 2, 0, Math.PI / 2]} />
+          <sphereGeometry args={[1.65, 64, 32, 0, Math.PI * 2, 0, Math.PI / 2]} />
           <meshStandardMaterial color="#f5c76a" metalness={0.85} roughness={0.22} envMapIntensity={2.2} emissive="#7c2d12" emissiveIntensity={0.15} side={THREE.DoubleSide} />
         </mesh>
         <mesh rotation={[Math.PI / 2, 0, 0]}>
@@ -77,7 +77,7 @@ export default function ClocheScene({ progress }) {
   const inView = useInView(wrap);
   return (
     <div ref={wrap} className="h-full w-full">
-      <Canvas dpr={[1, 1.75]} frameloop={inView ? 'always' : 'never'} camera={{ position: [0, 3.2, 11.5], fov: 35 }} gl={{ alpha: true, antialias: true }}>
+      <Canvas dpr={[1, 1.5]} frameloop={inView ? 'always' : 'never'} camera={{ position: [0, 3.2, 11.5], fov: 35 }} gl={{ alpha: true, antialias: true }}>
         <ambientLight intensity={0.5} />
         <pointLight position={[-5, 3, 4]} intensity={40} color="#fbbf24" />
         <spotLight position={[3, 8, 5]} angle={0.5} penumbra={1} intensity={50} color="#fff1db" />

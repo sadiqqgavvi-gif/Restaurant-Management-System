@@ -39,32 +39,45 @@ export default function OrbitalMenu({ dishes }) {
       };
       measure();
 
+      // Static transform parts are set once; per frame we only write compositor-friendly
+      // properties (transform + opacity) through quickSetters — no filters, no layout.
+      gsap.set(cards, { xPercent: -50, yPercent: -50, transformPerspective: 1400, force3D: true });
+      const setters = cards.map((card) => ({
+        card,
+        x: gsap.quickSetter(card, 'x', 'px'),
+        y: gsap.quickSetter(card, 'y', 'px'),
+        scale: gsap.quickSetter(card, 'scale'),
+        rotY: gsap.quickSetter(card, 'rotationY', 'deg'),
+        opacity: gsap.quickSetter(card, 'opacity'),
+        shade: gsap.quickSetter(card.querySelector('.orbit-shade'), 'opacity'),
+        z: -1,
+      }));
+
+      let visible = true;
       const render = (_, dt = 16) => {
-        idle += (dt / 1000) * 0.12;
+        if (!visible) return; // section off-screen: skip all work
+        idle += (Math.min(dt, 50) / 1000) * 0.12;
         const base = idle + scrollAngle;
         let best = -Infinity;
         let bestIdx = 0;
-        cards.forEach((card, i) => {
+        setters.forEach((c, i) => {
           const theta = base + (i / n) * TAU;
-          const x = Math.cos(theta) * rx;
-          const y = Math.sin(theta) * ry;
           const depth = (Math.sin(theta) + 1) / 2; // 1 = front (bottom of ellipse)
           if (depth > best) {
             best = depth;
             bestIdx = i;
           }
-          gsap.set(card, {
-            x,
-            y,
-            xPercent: -50,
-            transformPerspective: 1400,
-            yPercent: -50,
-            scale: 0.55 + depth * 0.55,
-            rotateY: -Math.cos(theta) * 28,
-            opacity: 0.3 + depth * 0.7,
-            zIndex: Math.round(depth * 100),
-            filter: `brightness(${0.45 + depth * 0.55})`,
-          });
+          c.x(Math.cos(theta) * rx);
+          c.y(Math.sin(theta) * ry);
+          c.scale(0.55 + depth * 0.55);
+          c.rotY(-Math.cos(theta) * 28);
+          c.opacity(0.35 + depth * 0.65);
+          c.shade(0.55 - depth * 0.55);
+          const z = Math.round(depth * 100);
+          if (z !== c.z) {
+            c.z = z;
+            c.card.style.zIndex = z;
+          }
         });
         if (bestIdx !== lastFront) {
           lastFront = bestIdx;
@@ -72,6 +85,9 @@ export default function OrbitalMenu({ dishes }) {
         }
       };
 
+      render();
+      const io = new IntersectionObserver(([e]) => (visible = e.isIntersecting), { rootMargin: '100px' });
+      io.observe(root.current);
       gsap.ticker.add(render);
       window.addEventListener('resize', measure);
 
@@ -96,6 +112,7 @@ export default function OrbitalMenu({ dishes }) {
       });
 
       return () => {
+        io.disconnect();
         gsap.ticker.remove(render);
         window.removeEventListener('resize', measure);
       };
@@ -134,7 +151,7 @@ export default function OrbitalMenu({ dishes }) {
         {list.map((dish, i) => (
           <article
             key={dish._id}
-            className="orbit-card absolute top-0 left-0 w-[150px] overflow-hidden rounded-3xl border border-white/10 bg-ink-800/90 shadow-2xl shadow-black/60 backdrop-blur-md will-change-transform sm:w-[220px]"
+            className="orbit-card absolute top-0 left-0 w-[150px] overflow-hidden rounded-3xl border border-white/10 bg-ink-800 shadow-xl shadow-black/50 will-change-transform sm:w-[220px]"
             data-cursor="hover"
             data-cursor-label="Add"
             onClick={() => {
@@ -143,6 +160,7 @@ export default function OrbitalMenu({ dishes }) {
             }}
           >
             <DishImage src={dish.image} alt={dish.name} accent={dish.accent} className="aspect-[4/3] w-full" />
+            <span className="orbit-shade pointer-events-none absolute inset-0 z-10 bg-black" />
             <div className="p-3 sm:p-4">
               <div className="flex items-center justify-between gap-2">
                 <h3 className="truncate font-display text-sm sm:text-lg">{dish.name}</h3>
@@ -160,7 +178,7 @@ export default function OrbitalMenu({ dishes }) {
       {/* active dish details */}
       {active && (
         <div className="absolute inset-x-0 bottom-8 z-[120] flex justify-center px-4">
-          <div key={active._id} className="glass flex max-w-xl animate-[fadeUp_.6s_ease] items-center gap-4 rounded-full bg-ink-900/70 py-2 pr-2 pl-6">
+          <div key={active._id} className="glass flex max-w-xl animate-[fadeUp_.6s_ease] items-center gap-4 rounded-full bg-ink-900/95 py-2 pr-2 pl-6">
             <p className="line-clamp-1 text-sm text-cream/70">
               <span className="font-semibold text-cream">{active.name}</span> — {active.description}
             </p>

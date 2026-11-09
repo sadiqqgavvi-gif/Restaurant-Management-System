@@ -14,9 +14,8 @@ export default function ReserveCTA() {
 
   useGSAP(
     () => {
-      gsap.fromTo('.cta-panel', { scale: 0.85, borderRadius: '6rem' }, {
+      gsap.fromTo('.cta-panel', { scale: 0.88 }, {
         scale: 1,
-        borderRadius: '2.5rem',
         ease: 'none',
         scrollTrigger: { trigger: root.current, start: 'top bottom', end: 'top 30%', scrub: true },
       });
@@ -28,7 +27,7 @@ export default function ReserveCTA() {
     <section ref={root} className="py-20 sm:py-28">
       <div className="container-x">
         <div
-          className="cta-panel relative overflow-hidden border border-white/10 bg-ink-800 px-6 py-20 text-center sm:px-16 sm:py-28"
+          className="cta-panel relative overflow-hidden rounded-[2.5rem] will-change-transform border border-white/10 bg-ink-800 px-6 py-20 text-center sm:px-16 sm:py-28"
           onMouseMove={(e) => {
             const r = e.currentTarget.getBoundingClientRect();
             mx.set(e.clientX - r.left);
@@ -36,7 +35,7 @@ export default function ReserveCTA() {
           }}
         >
           <motion.div className="pointer-events-none absolute inset-0" style={{ background: bg }} />
-          <div className="pointer-events-none absolute -bottom-40 left-1/2 size-[500px] -translate-x-1/2 rounded-full bg-ember-600/20 blur-[100px]" />
+          <div className="pointer-events-none absolute -bottom-60 left-1/2 size-[700px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(234,88,12,.22),transparent_60%)]" />
           <div className="relative">
             <span className="eyebrow justify-center">Tonight · Tomorrow · Always</span>
             <SplitReveal text={'Your table is\n*warming* up.'} className="mx-auto mt-6 font-display text-5xl leading-[0.95] font-light sm:text-7xl lg:text-8xl" />
