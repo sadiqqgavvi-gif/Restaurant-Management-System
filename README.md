@@ -47,6 +47,15 @@ Open http://localhost:5173.
 
 **Dashboard login (dev):** `admin@ember.com` / `admin123`. Change these with `ADMIN_EMAIL` / `ADMIN_PASSWORD` in `.env`.
 
+### Troubleshooting
+
+- **`/api/... 502 (Bad Gateway)` in the browser console**: the React app is running but the API on port 5000 is not.
+  Run `npm run dev` from the **repo root** (not inside `client/`) so both start, and read the `[api]` lines in the terminal.
+  On the very first run the in-memory MongoDB downloads its binary (~100 MB), so the API can take a minute to come up.
+  While it is down the menu falls back to an offline copy, but orders and reservations cannot be saved.
+- **`THREE.Clock: This module has been deprecated`**: a harmless warning from inside React Three Fiber with the latest
+  three.js. It is not from this project's code and does not affect anything.
+
 ### Production
 
 ```bash
