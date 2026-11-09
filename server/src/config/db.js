@@ -4,7 +4,7 @@ let memoryServer;
 const isProd = process.env.NODE_ENV === 'production';
 
 async function startMemoryServer() {
-  console.log('⏳ Starting in-memory MongoDB (the first run downloads the MongoDB binary, ~100 MB — please wait)…');
+  console.log('⏳ Starting in-memory MongoDB — the first run downloads the MongoDB binary once (can be 700+ MB on Windows), please wait…');
   try {
     const { MongoMemoryServer } = await import('mongodb-memory-server');
     memoryServer = await MongoMemoryServer.create();

@@ -10,20 +10,26 @@ export default function ApiStatus() {
 
   useEffect(() => {
     let timer;
+    let cancelled = false; // StrictMode mounts effects twice in dev — avoid two polling loops
     let wasOffline = false;
     const check = async () => {
       try {
         const res = await fetch(`${BASE}/health`, { cache: 'no-store' });
         if (!res.ok) throw new Error(String(res.status));
+        if (cancelled) return;
         setStatus(wasOffline ? 'recovered' : 'online');
       } catch {
+        if (cancelled) return;
         wasOffline = true;
         setStatus('offline');
         timer = setTimeout(check, 5000);
       }
     };
     check();
-    return () => clearTimeout(timer);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
   }, []);
 
   const show = status === 'offline' || status === 'recovered';
