@@ -12,7 +12,7 @@
 ![Three.js](https://img.shields.io/badge/Three.js-000?logo=threedotjs&logoColor=white)
 ![GSAP](https://img.shields.io/badge/GSAP-88CE02?logo=greensock&logoColor=black)
 
-**Live demo:** _add your Vercel URL here after deploying (see [Deploy](#-deploy-free-no-credit-card))_
+**Live demo:** [ember-restaurant-henna.vercel.app](https://ember-restaurant-henna.vercel.app) · Staff dashboard at [`/admin`](https://ember-restaurant-henna.vercel.app/admin)
 
 ![Ember home page with an interactive 3D dish](docs/screenshots/hero.jpg)
 
